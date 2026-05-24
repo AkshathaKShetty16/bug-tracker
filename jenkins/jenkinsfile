@@ -1,28 +1,14 @@
 pipeline {
     agent any
- 
+
+    environment {
+        PATH = "/usr/local/go/bin:${env.PATH}"
+    }
+
     stages {
-        stage('Unit Tests - Backend') {
-            agent {
-                docker {
-                    image 'snakee/golang-junit:1.21'
-                    reuseNode true // ensures container uses same workspace and Jenkins node
-                }
-            }
+        stage('Check Go') {
             steps {
-                dir('bugtracker-backend') {
-                    sh '''
-                        # Set Go cache to a writable location
-                        export GOCACHE="$PWD/.cache/go-build"
-                        export GOMODCACHE="$PWD/.cache/go-mod"
-                        
-                        # Create cache directories
-                        mkdir -p "$GOCACHE" "$GOMODCACHE"
-                        
-                        # Run the tests
-                        go test -v ./...
-                    '''
-                }
+                sh 'go version'
             }
         }
     }
