@@ -1,14 +1,19 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "/usr/local/go/bin:${env.PATH}"
-    }
-
     stages {
-        stage('Check Go') {
-            steps {
-                sh 'go version'
+        stage('Unit Tests - Backend') {
+            agent {
+                docker{
+                    image 'snakee/golang-junit:1.21'
+                    reuseNode true
+                }
+            }
+            steps{
+                dir('bugtracker-backend') {
+                    go test -v ./...
+            }
+            
             }
         }
     }
