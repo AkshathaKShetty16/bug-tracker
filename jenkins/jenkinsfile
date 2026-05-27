@@ -26,8 +26,9 @@ pipeline {
                     '''
                 }
             }
-            post{
-                always{
+
+            post {
+                always {
                     junit 'bugtracker-backend/test-results.xml'
                 }
             }
@@ -49,6 +50,9 @@ pipeline {
 
                         # Run the tests
                         npm test
+
+                        mkdir -p reports
+                        mv coverage reports/
                     '''
                 }
             }
@@ -57,8 +61,15 @@ pipeline {
 
     post {
         always {
-            // Archive test results
+
+            // Archive frontend test results
             junit 'bugtracker-frontend/test-results.xml'
+
+            publishHTML(target: [
+                reportDir: 'bugtracker-frontend/reports/coverage',
+                reportFiles: 'index.html',
+                reportName: 'Frontend Coverage Report'
+            ])
         }
     }
 }
